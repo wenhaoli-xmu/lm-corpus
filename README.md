@@ -1,9 +1,5 @@
 <img src="./doc/images/lm-corpus.png" style="width: 100%; display: block; margin: 0 auto;">
 
-
-# LM-Corpus
-Quickly Building your Language Modeling Dataset for Training
-
 ## Installation
 
 ```bash
