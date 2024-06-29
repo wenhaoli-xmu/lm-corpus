@@ -1,6 +1,7 @@
-# LM-Corpus: Quickly Building your Language Modeling Dataset for Training
-
 ![img](./doc/images/lm-corpus.png)
+
+# LM-Corpus
+Quickly Building your Language Modeling Dataset for Training
 
 ## Installation
 
