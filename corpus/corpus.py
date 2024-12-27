@@ -131,16 +131,19 @@ class Corpus(BasicCorpus):
 
 
 class RandomSampleCorpus(BasicCorpus):
-    def get_total_lines(self):
-        count = 0
-        with open(self.json_path, 'r') as f:
-            for _ in f:
-                count += 1
-        self._total = count
+
+    @property
+    def total(self):
+        if not hasattr(self, "_total"):
+            count = 0
+            with open(self.json_path, 'r') as f:
+                for _ in f:
+                    count += 1
+            self._total = count
+        return self._total
 
 
     def sample_data(self):
-        self.get_total_lines()
         with open(self.json_path, 'r') as f:
             line = f.readline()
             i = 0
@@ -170,7 +173,7 @@ class RandomSampleCorpus(BasicCorpus):
             self._time = time.time()
             self._ema_time = None
         if self._step % 10 == 0:
-            delta = (time.time() - self._time) * (self._total - self._step)
+            delta = (time.time() - self._time) * (self.total - self._step)
             self._time = time.time()
             self._ema_time = (delta * 10
                 if self._ema_time is None 
@@ -217,28 +220,29 @@ class LazyCorpus(LazyBasicCorpus):
 
         
 class LazyRandomSampleCorpus(LazyBasicCorpus):
-    def get_total_lines(self):
-        count = 0
-        with open(self.json_path, 'r') as f:
-            for _ in f:
-                count += 1
-        self._total = count
+    @property
+    def total(self):
+        if not hasattr(self, "_total"):
+            count = 0
+            with open(self.json_path, 'r') as f:
+                for _ in f:
+                    count += 1
+            self._total = count
+        return self._total
 
 
     def sample_data(self):
-        self.get_total_lines()
         with open(self.json_path, 'r') as f:
             for line in f:
                 if line.strip() == '':
                     continue
                 data = json.loads(line)
                 self.data.append(data)
-                self.print_process_info()
         self.data = random.choices(self.data, k=self.max_instance)
 
 
     def print_process_info(self):
-        corpus_log(f"{self.json_path}:\t{len(self.data)}/{self._total}", end='\r', flush=True)
+        corpus_log(f"{self.json_path}:\t{len(self.data)}/{self.total}", end='\r', flush=True)
 
 
     def __getitem__(self, index):
